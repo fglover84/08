@@ -1,0 +1,12 @@
+# Package managers
+node_modules
+package-lock.json
+out/
+
+# OS files
+.DS_Store
+
+# Test reports
+coverage
+test-report
+
