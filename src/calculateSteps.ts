@@ -11,7 +11,7 @@ import { instructions, network } from "./inputData";
 //   ZZZ: ["ZZZ", "ZZZ"],
 // };
 
-export const calculateSteps = (
+export const calculateSteps = async (
   instructions: string,
   network: { [key: string]: string[] }
 ) => {
