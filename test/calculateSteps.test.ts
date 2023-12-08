@@ -1,7 +1,8 @@
 import { calculateSteps } from "../src/calculateSteps";
+// import { instructions, network } from "./inputData";
 
 test("1", () => {
-  const instructions = ["R", "L"];
+  const instructions = "RL";
   const network = {
     AAA: ["BBB", "CCC"],
     BBB: ["DDD", "EEE"],
@@ -16,7 +17,24 @@ test("1", () => {
   expect(result).toEqual(2);
 });
 
-// test("2", () => {
-//   const result = calculateSteps();
-//   expect(result).toEqual(6);
-// });
+test("2", () => {
+  const instructions = "LLR";
+  const network = {
+    AAA: ["BBB", "BBB"],
+    BBB: ["AAA", "ZZZ"],
+    ZZZ: ["ZZZ", "ZZZ"],
+  };
+  const result = calculateSteps(instructions, network);
+  expect(result).toEqual(6);
+});
+
+test("2", () => {
+  const instructions = "LLR";
+  const network = {
+    AAA: ["BBB", "BBB"],
+    BBB: ["AAA", "ZZZ"],
+    ZZZ: ["ZZZ", "ZZZ"],
+  };
+  const result = calculateSteps(instructions, network);
+  expect(result).toEqual(6);
+});
