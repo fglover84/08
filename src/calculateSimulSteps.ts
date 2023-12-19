@@ -1,80 +1,40 @@
 import { instructions, network } from "./inputData";
 
-// const instructions = "LR"
-// const network = {
-// 11A: ["11B", "XXX"]
-// 11B: ["XXX", "11Z"]
-// 11Z: ["11B", "XXX"]
-// 22A: ["22B", "XXX"]
-// 22B: ["22C", "22C"]
-// 22C: ["22Z", "22Z"]
-// 22Z: ["22B", "22B"]
-// XXX: ["XXX", "XXX"]
-// };
-let count = 0;
-let currentNodes: string[];
+type NodeMap = { [key: string]: [string, string] };
 
-async function processInstruction(
-  instructionIndexes: number[],
-  network: { [key: string]: string[] },
-  currentNode: string
-) {
-  currentNodes.push(
-    await calculateCurrentNode(instructionIndexes, network, currentNode)
-  );
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
 }
 
-export const calculateSimulSteps = async (
-  instructions: string,
-  network: { [key: string]: string[] }
-) => {
-  const instructionIndexes = convertInstructionsToIndex(instructions);
-  console.log({ instructionIndexes });
+function lcm(a: number, b: number): number {
+  return (a * b) / gcd(a, b);
+}
 
-  currentNodes = getStartingNodes(Object.keys(network));
-  let promises = [];
+function findPathLength(
+  nodeMap: NodeMap,
+  startNode: string,
+  instructions: string
+): number {
+  let current = startNode;
+  let steps = 0;
 
-  while (!endNodesFound(currentNodes)) {
-    for (let currentNode of currentNodes) {
-      promises.push(
-        processInstruction(instructionIndexes, network, currentNode)
-      );
-    }
-    console.log({ count });
-    await Promise.all(promises);
+  while (!current.endsWith("Z")) {
+    const instruction = instructions[steps % instructions.length];
+    current = nodeMap[current][instruction === "L" ? 0 : 1];
+    steps++;
   }
 
-  console.log({ count });
-  return count;
-};
+  return steps;
+}
 
-const convertInstructionsToIndex = (instructions: string) => {
-  const instructionsArr = instructions.split("");
-  return instructionsArr.map((instruction: string) => {
-    return instruction === "L" ? 0 : 1;
-  });
-};
+function findStepsToAllZNodes(nodeMap: NodeMap, instructions: string): number {
+  const startingNodes = Object.keys(nodeMap).filter((node) =>
+    node.endsWith("A")
+  );
+  let pathLengths = startingNodes.map((node) =>
+    findPathLength(nodeMap, node, instructions)
+  );
+  return pathLengths.reduce(lcm);
+}
 
-const getStartingNodes = (networkKeys: string[]) => {
-  const startPattern = /.*A$/;
-  return networkKeys.filter((key) => startPattern.test(key));
-};
-
-const endNodesFound = (nodes: string[]) => {
-  const endPattern: RegExp = /.*Z$/;
-  return nodes.every((node) => endPattern.test(node));
-};
-
-const calculateCurrentNode = async (
-  instructionIndexes: number[],
-  network: { [key: string]: string[] },
-  currentNode: string
-) => {
-  for (let eachInstruction of instructionIndexes) {
-    currentNode = network[currentNode][eachInstruction];
-    count++;
-  }
-  return currentNode;
-};
-
-calculateSimulSteps(instructions, network);
+console.log(findStepsToAllZNodes(network, instructions)); // Output: Number of steps
